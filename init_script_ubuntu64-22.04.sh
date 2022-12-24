@@ -148,7 +148,7 @@ function software_install() {
 	cmd_highlight tar -xzf ${BASE_DIR}/Tool/pycharm*.tar.gz -C /opt/Tool/
 	cmd_highlight ln -s /opt/Tool/pycharm*/bin/pycharm.sh /opt/bin/pycharm
 	notice "命令行输入pycharm可启动pycharm"
-	notice "jetbrains_settings.zip under the path: ${BASE_DIR}/Tool/"
+	notice "settings.zip under the path: ${BASE_DIR}/workspace/system-init/profile/jetbrains/pycharm/"
 	cmd_highlight cat ${BASE_DIR}/activationCode/jet_brains
 	notice "查看上方激活码"
 
@@ -156,7 +156,8 @@ function software_install() {
 	cmd_highlight tar -xzf ${BASE_DIR}/Tool/goland*.tar.gz -C /opt/Tool/
 	cmd_highlight ln -s /opt/Tool/GoLand*/bin/goland.sh /opt/bin/goland
 	notice "命令行输入goland可启动goland"
-	notice "jetbrains_settings.zip under the path: ${BASE_DIR}/Tool/"
+	notice "settings.zip under the path: ${BASE_DIR}/workspace/system-init/profile/jetbrains/goland/"
+
 	cmd_highlight cat ${BASE_DIR}/activationCode/jet_brains
 	notice "查看上方激活码"
 }
