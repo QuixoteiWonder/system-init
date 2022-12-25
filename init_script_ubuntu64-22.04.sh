@@ -36,7 +36,8 @@ read -p "network & sshd & common-instruction & workspace configure? [y/n] [defau
 read -p "software & language install? [y/n] [default: no] " SOFT_FLAG
 read -p "Are you sure to continue? [y/n]: " INPUT
 
-case $INPUT in
+function continue_check() {
+	case $INPUT in
         [yY]*)
                 ;;
         [nN]*)
@@ -46,8 +47,11 @@ case $INPUT in
                 echo "Just enter y or n, please."
                 exit
                 ;;
-esac
-unset INPUT
+	esac
+	unset INPUT
+}
+
+continue_check
 
 function cmd_highlight() {
 	# 将传入的命令高亮显示
@@ -77,6 +81,30 @@ function notice() {
 
 
 # DOCKER. TODO...
+function docker_install() {
+	# 1. Update the apt package index and install packages to allow apt to use a repository over HTTPS:
+	cmd_highlight sudo apt install -y ca-certificates curl gnupg lsb-release
+
+	# 2. Add Docker’s official GPG key:
+	cmd_highlight sudo mkdir -p /etc/apt/keyrings
+	# cmd_highlight curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+	cmd_highlight curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+	# 3. Use the following command to set up the repository:
+
+	# echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+	echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+	# 4. Update the apt package index:
+	cmd_highlight sudo chmod a+r /etc/apt/keyrings/docker.gpg
+	cmd_highlight sudo apt update
+
+	# 5. Install the latest version Docker Engine, containerd, and Docker Compose:
+	sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+	notice "Verify that the Docker Engine installation is successful by running the hello-world image: sudo docker run hello-world"
+}
+
 
 
 function network_configure() {
@@ -97,7 +125,6 @@ function ssh_configure() {
 function common_instruction_install() {
 	# 常用Linux命令安装
 	cmd_highlight sudo apt install -y vim net-tools tree silversearcher-ag tig lrzsz
-	alias rz="rz -be"
 
 	# vim 
 	cmd_highlight sudo cp /etc/vim/vimrc /etc/vim/vimrc.bak
@@ -251,6 +278,7 @@ function main() {
 		network_configure
 		ssh_configure
 		common_instruction_install
+		docker_install
 		workspace_configure
 	fi
 	if [[ $SOFT_FLAG =~ ^[yY].* ]]; then
@@ -259,4 +287,5 @@ function main() {
 	fi
 }
 
-main
+# main
+docker_install
