@@ -100,9 +100,23 @@ function docker_install() {
 	cmd_highlight sudo apt update
 
 	# 5. Install the latest version Docker Engine, containerd, and Docker Compose:
-	sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+	cmd_highlight sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-	notice "Verify that the Docker Engine installation is successful by running the hello-world image: sudo docker run hello-world"
+
+	# 6. create the docker group:
+	cmd_highlight sudo groupadd docker
+
+	# 7. add current user to the docker group:
+	cmd_highlight sudo usermod -aG docker $USER
+
+	# 8. activate the changes to groups:
+	cmd_highlight newgrp docker
+
+	# 9. add hub proxy:
+	cmd_highlight cp -f -f ${BASE_DIR}/profile/docker/etc_docker_daemon.json /etc/docker/daemon.json
+
+	notice "Verify that the Docker Engine installation is successful by running the hello-world image:
+	  docker run hello-world"
 }
 
 
@@ -287,5 +301,4 @@ function main() {
 	fi
 }
 
-# main
-docker_install
+main
